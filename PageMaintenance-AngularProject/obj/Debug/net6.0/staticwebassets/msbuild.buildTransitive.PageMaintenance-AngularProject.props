@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\PageMaintenance-AngularProject.props" />
+</Project>
