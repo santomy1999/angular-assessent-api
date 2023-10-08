@@ -19,24 +19,33 @@ namespace PageMaintenance_AngularProject.Services
             var form = await _polAdminSysContext.Forms.FindAsync(id);
             return form != null ? form : null;
         }
-        public async Task<List<Form>?> GetAllForms()
+        public async Task<List<Form>?> GetAllForms(int pageNumber, int pageSize)
         {
-            var forms = await _polAdminSysContext.Forms.ToListAsync();
+            var forms = await _polAdminSysContext.Forms
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
             return forms.Any() ? forms : null;
         }
-        public async Task<List<Form>?> GetFormByFormName(string formName)
+
+        public async Task<List<Form>?> GetFormByFormName(string formName, int pageNumber, int pageSize)
         {
 
             var forms = await _polAdminSysContext.Forms
                 .Where(x => x.Name.Contains(formName))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
             return forms.Any() ? forms : (List<Form>?)null;
         }
 
-        public async Task<List<Form>?> GetFormByFormNumber(string formNumber)
+        public async Task<List<Form>?> GetFormByFormNumber(string formNumber, int pageNumber, int pageSize)
         {
             var forms = await _polAdminSysContext.Forms
                 .Where(x => x.Number.Contains(formNumber))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
             return forms.Any() ? forms : (List<Form>?)null;
         }

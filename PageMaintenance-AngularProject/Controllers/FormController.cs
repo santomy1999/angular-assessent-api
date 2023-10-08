@@ -14,12 +14,29 @@ namespace PageMaintenance_AngularProject.Controllers
         {
             _formInterface = formInterface;
         }
+        //[HttpGet("formsAll")]
+        //public async Task<IActionResult> GetAllForms()
+        //{
+        //    try
+        //    {
+        //        var forms = await _formInterface.GetAllForms();
+        //        if (forms.Any())
+        //        {
+        //            return Ok(forms);
+        //        }
+        //        return NotFound("No Forms Found");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
         [HttpGet("formsAll")]
-        public async Task<IActionResult> GetAllForms()
+        public async Task<IActionResult> GetAllForms([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
         {
             try
             {
-                var forms = await _formInterface.GetAllForms();
+                var forms = await _formInterface.GetAllForms(pageNumber, pageSize);
                 if (forms.Any())
                 {
                     return Ok(forms);
@@ -49,7 +66,7 @@ namespace PageMaintenance_AngularProject.Controllers
             }
         }
         [HttpGet("formName:{formName}")]
-        public async Task<IActionResult> GetFormByFormName([FromRoute] string formName)
+        public async Task<IActionResult> GetFormByFormName([FromRoute] string formName, [FromQuery] int pageNumber=1, [FromQuery] int pageSize = 30)
         {
             try
             {
@@ -57,7 +74,7 @@ namespace PageMaintenance_AngularProject.Controllers
                 {
                     return BadRequest("Form Name is null or empty");
                 }
-                var forms = await _formInterface.GetFormByFormName(formName);
+                var forms = await _formInterface.GetFormByFormName(formName ,pageNumber , pageSize);
                 if (forms != null && forms.Any())
                 {
                     return Ok(forms);
@@ -71,7 +88,7 @@ namespace PageMaintenance_AngularProject.Controllers
             }
         }
         [HttpGet("formNumber:{formNumber}")]
-        public async Task<IActionResult> GetFormByFormNumber([FromRoute] string formNumber)
+        public async Task<IActionResult> GetFormByFormNumber([FromRoute] string formNumber, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
         {
             try
             {
@@ -79,7 +96,7 @@ namespace PageMaintenance_AngularProject.Controllers
                 {
                     return BadRequest("Form Number is null or empty");
                 }
-                var forms = await _formInterface.GetFormByFormNumber(formNumber);
+                var forms = await _formInterface.GetFormByFormNumber(formNumber ,pageNumber, pageSize);
                 if (forms != null && forms.Any())
                 {
                     return Ok(forms);

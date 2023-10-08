@@ -7,6 +7,7 @@ using Moq;
 using PageMaintenance_AngularProject.Controllers;
 using PageMaintenance_AngularProject.Models;
 using PageMaintenance_AngularProject.Services;
+using System.Drawing.Printing;
 
 namespace PageMaintenanceAPI_Test
 {
@@ -29,46 +30,55 @@ namespace PageMaintenanceAPI_Test
         {
             //Arrange
             var forms = _fixture.Create<List<Form>>();
-            _formInterface.Setup(f=>f.GetAllForms()).ReturnsAsync(forms);
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
+
+            _formInterface.Setup(f=>f.GetAllForms(pageNumber,pageSize)).ReturnsAsync(forms);
 
             //Act
-            var result = _formController.GetAllForms();
+            var result = _formController.GetAllForms(pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
             result.Result.Should().BeAssignableTo<OkObjectResult>().Subject.Value.Should().Be(forms);
-            _formInterface.Verify(f=>f.GetAllForms(), Times.Once());
+            //result.
+            _formInterface.Verify(f=>f.GetAllForms(pageNumber, pageSize), Times.Once());
         }
         [Fact]
         public async void GetAllForms_ShouldReturnNotFoundResult_WhenFormsNotFound()
         {
+
             //Arrange
-            _formInterface.Setup(f=>f.GetAllForms()).ReturnsAsync(new List<Form>());
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
+            _formInterface.Setup(f=>f.GetAllForms(pageNumber, pageSize)).ReturnsAsync(new List<Form>());
 
             //Act
-            var result = _formController.GetAllForms();
+            var result = _formController.GetAllForms(pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
             result.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject.Value.Should().Be("No Forms Found");
-            _formInterface.Verify(f => f.GetAllForms(), Times.Once());
+            _formInterface.Verify(f => f.GetAllForms(pageNumber, pageSize), Times.Once());
         }
         [Fact]
         public async void GetAllForms_ShouldReturnBadRequest_WhenErrorOccurs()
         {
             //Arrange
-            _formInterface.Setup(f => f.GetAllForms()).Throws(new Exception("Error occured"));
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
+            _formInterface.Setup(f => f.GetAllForms(pageNumber,pageSize)).Throws(new Exception("Error occured"));
 
             //Act
-            var result = _formController.GetAllForms();
+            var result = _formController.GetAllForms(pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
             result.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject.Value.Should().Be("Error occured");
-            _formInterface.Verify(f => f.GetAllForms(), Times.Once());
+            _formInterface.Verify(f => f.GetAllForms(pageNumber, pageSize), Times.Once());
         }
         //GetFormById test
         [Fact]
@@ -123,159 +133,180 @@ namespace PageMaintenanceAPI_Test
         [Fact]
         public async void GetFormByFormName_ShouldReturnOkResult_WhenSuccess()
         {
-            //Arrange
+            //Arrange int pageNumber = _fixture.Create<int>();
+            
             var formName = _fixture.Create<String>();
             var form = _fixture.Create<List<Form>>();
-            _formInterface.Setup(t => t.GetFormByFormName(formName)).ReturnsAsync(form);
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
+            _formInterface.Setup(t => t.GetFormByFormName(formName, pageNumber, pageSize)).ReturnsAsync(form);
 
             //Action
-            var result = _formController.GetFormByFormName(formName);
+            var result = _formController.GetFormByFormName(formName, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
             result.Result.Should().BeAssignableTo<OkObjectResult>().Subject.Value.Should().Be(form);
-            _formInterface.Verify(t => t.GetFormByFormName(formName), Times.Once());
+            _formInterface.Verify(t => t.GetFormByFormName(formName, pageNumber, pageSize), Times.Once());
         }
         [Fact]
         public async void GetFormByFormName_ShouldReturnNotFoundResult_WhenFormNotFound()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             var formName = _fixture.Create<String>();
-            _formInterface.Setup(t => t.GetFormByFormName(formName)).Returns(Task.FromResult<List<Form>>(null));
+            _formInterface.Setup(t => t.GetFormByFormName(formName, pageNumber, pageSize)).Returns(Task.FromResult<List<Form>>(null));
 
             //Act
-            var result = _formController.GetFormByFormName(formName);
+            var result = _formController.GetFormByFormName(formName, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject.Value.Should().Be("Form Not Found");
-            _formInterface.Verify(t => t.GetFormByFormName(formName), Times.Once());
+            _formInterface.Verify(t => t.GetFormByFormName(formName, pageNumber, pageSize), Times.Once());
 
         }
         [Fact]
         public async void GetFormByFormName_ShouldReturnBadRequestResult_When_ErrorOccurs()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             var formName = _fixture.Create<String>();
-            _formInterface.Setup(t => t.GetFormByFormName(formName)).Throws(new Exception("Error Occured"));
+            _formInterface.Setup(t => t.GetFormByFormName(formName, pageNumber, pageSize)).Throws(new Exception("Error Occured"));
 
             //Act
-            var result = _formController.GetFormByFormName(formName);
+            var result = _formController.GetFormByFormName(formName, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<BadRequestObjectResult>("Error Occured");
-            _formInterface.Verify(t => t.GetFormByFormName(formName), Times.Once());
+            _formInterface.Verify(t => t.GetFormByFormName(formName, pageNumber, pageSize), Times.Once());
         }
         [Fact]
         public async void GetFormByFormName_ShouldReturnBadRequestResult_When_FormNumber_IsNull()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             String formName = null;
-            _formInterface.Setup(t => t.GetFormByFormName(formName));
+            _formInterface.Setup(t => t.GetFormByFormName(formName , pageNumber, pageSize));
 
             //Act
-            var result = _formController.GetFormByFormName(formName);
+            var result = _formController.GetFormByFormName(formName, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<BadRequestObjectResult>("Form Name is null or empty");
-            _formInterface.Verify(t => t.GetFormByFormName(formName), Times.Never());
+            _formInterface.Verify(t => t.GetFormByFormName(formName, pageNumber, pageSize), Times.Never());
         }
         [Fact]
         public async void GetFormByFormName_ShouldReturnBadRequestResult_When_FormNumber_IsEmpty()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             String formName = "";
-            _formInterface.Setup(t => t.GetFormByFormName(formName));
+            _formInterface.Setup(t => t.GetFormByFormName(formName, pageNumber, pageSize));
 
             //Act
-            var result = _formController.GetFormByFormName(formName);
+            var result = _formController.GetFormByFormName(formName, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<BadRequestObjectResult>("Form Name is null or empty");
-            _formInterface.Verify(t => t.GetFormByFormNumber(formName), Times.Never());
+            _formInterface.Verify(t => t.GetFormByFormNumber(formName, pageNumber, pageSize), Times.Never());
         }
         //GetFormByFormNumber
         [Fact]
         public async void GetFormByFormNumber_ShouldReturnOkResult_WhenSuccess()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             var formNumber = _fixture.Create<String>();
             var form = _fixture.Create<List<Form>>();
-            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber)).ReturnsAsync(form);
+            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber,pageNumber, pageSize)).ReturnsAsync(form);
 
             //Action
-            var result = _formController.GetFormByFormNumber(formNumber);
+            var result = _formController.GetFormByFormNumber(formNumber, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
             result.Result.Should().BeAssignableTo<OkObjectResult>().Subject.Value.Should().Be(form);
-            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Once());
+            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize), Times.Once());
         }
         [Fact]
         public async void GetFormByFormNumber_ShouldReturnNotFoundResult_WhenFormNotFound()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             var formNumber = _fixture.Create<String>();
-            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber)).Returns(Task.FromResult<List<Form>>(null));
+            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize)).Returns(Task.FromResult<List<Form>>(null));
 
             //Act
-            var result = _formController.GetFormByFormNumber(formNumber);
+            var result = _formController.GetFormByFormNumber(formNumber, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject.Value.Should().Be("Form Not Found");
-            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Once());
+            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize), Times.Once());
 
         }
         [Fact]
         public async void GetFormByFormNumber_ShouldReturnBadRequestResult_When_ErrorOccurs()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             var formNumber = _fixture.Create<String>();
-            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber)).Throws(new Exception("Error Occured"));
+            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize)).Throws(new Exception("Error Occured"));
 
             //Act
-            var result = _formController.GetFormByFormNumber(formNumber);
+            var result = _formController.GetFormByFormNumber(formNumber, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<BadRequestObjectResult>("Error Occured");
-            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Once());
+            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize), Times.Once());
         }
         [Fact]
         public async void GetFormByFormNumber_ShouldReturnBadRequestResult_When_FormNumber_IsNull()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             String formNumber = null;
-            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber));
+            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize));
 
             //Act
-            var result = _formController.GetFormByFormNumber(formNumber);
+            var result = _formController.GetFormByFormNumber(formNumber, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<BadRequestObjectResult>("Form Number is null or empty");
-            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Never());
+            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize), Times.Never());
         }
         [Fact]
         public async void GetFormByFormNumber_ShouldReturnBadRequestResult_When_FormNumber_IsEmpty()
         {
             //Arrange
+            int pageNumber = _fixture.Create<int>();
+            int pageSize = _fixture.Create<int>();
             String formNumber = "";
-            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber));
+            _formInterface.Setup(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize));
 
             //Act
-            var result = _formController.GetFormByFormNumber(formNumber);
+            var result = _formController.GetFormByFormNumber(formNumber, pageNumber, pageSize);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<BadRequestObjectResult>("Form Number is null or empty");
-            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Never());
+            _formInterface.Verify(t => t.GetFormByFormNumber(formNumber, pageNumber, pageSize), Times.Never());
         }
         //AddForm Test
         [Fact]
