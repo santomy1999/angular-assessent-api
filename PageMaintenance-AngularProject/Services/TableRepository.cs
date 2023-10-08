@@ -11,7 +11,7 @@ namespace PageMaintenance_AngularProject.Services
         {
             this._polAdminSysContext = dbContext;
         }
-        public async Task<List<TableNames>> GetTableNames( )
+        public async Task<List<TableNames>?> GetTableNames( )
         {
             var tableNames = await _polAdminSysContext.Aotables.Select(
                 table => new TableNames{
@@ -21,7 +21,7 @@ namespace PageMaintenance_AngularProject.Services
             return tableNames.Count >0 ? tableNames : (List<TableNames>?)null;
         }
 
-        public async Task<Aotable> GetTableById(Guid id)
+        public async Task<Aotable?> GetTableById(Guid id)
         {
 
             var table = await _polAdminSysContext.Aotables.FindAsync(id);

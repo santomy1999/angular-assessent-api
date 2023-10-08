@@ -6,10 +6,10 @@ namespace PageMaintenance_AngularProject.Services
     {
         Task<Form> AddForm(Form form);
         Task<Form> DeleteFormById(Guid formId);
-        Task<Form> EditFormById(Guid formId, Form newForm);
+        Task<Form> EditFormById(Form newForm);
         Task<List<Form>?> GetAllForms();
-        Task<List<Form>> GetFormByFormName(string formName);
-        Task<List<Form>> GetFormByFormNumber(string formNumber);
+        Task<List<Form>?> GetFormByFormName(string formName);
+        Task<List<Form>?> GetFormByFormNumber(string formNumber);
         Task<Form> GetFormById(Guid id);
     }
 }

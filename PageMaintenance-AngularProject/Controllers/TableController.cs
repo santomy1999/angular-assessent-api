@@ -32,7 +32,7 @@ namespace PageMaintenance_AngularProject.Controllers
             }
         }
         [HttpGet("table/{id}")]
-        public async Task<IActionResult> GetTableById(Guid id)
+        public async Task<IActionResult> GetTableById([FromRoute]Guid id)
         {
             try
             {   

@@ -25,7 +25,7 @@ namespace PageMaintenanceAPI_Test
 
         //GetAllForms Test
         [Fact]
-        public async void GetAllForms_ShouldReturn_OkResult_WhenSeccess()
+        public async void GetAllForms_ShouldReturnOkResult_WhenSeccess()
         {
             //Arrange
             var forms = _fixture.Create<List<Form>>();
@@ -41,7 +41,7 @@ namespace PageMaintenanceAPI_Test
             _formInterface.Verify(f=>f.GetAllForms(), Times.Once());
         }
         [Fact]
-        public async void GetAllForms_ShouldReturn_NotFoundResult_WhenFormsNotFound()
+        public async void GetAllForms_ShouldReturnNotFoundResult_WhenFormsNotFound()
         {
             //Arrange
             _formInterface.Setup(f=>f.GetAllForms()).ReturnsAsync(new List<Form>());
@@ -56,7 +56,7 @@ namespace PageMaintenanceAPI_Test
             _formInterface.Verify(f => f.GetAllForms(), Times.Once());
         }
         [Fact]
-        public async void GetAllForms_ShouldReturn_BadRequest_WhenErrorOccurs()
+        public async void GetAllForms_ShouldReturnBadRequest_WhenErrorOccurs()
         {
             //Arrange
             _formInterface.Setup(f => f.GetAllForms()).Throws(new Exception("Error occured"));
@@ -72,7 +72,7 @@ namespace PageMaintenanceAPI_Test
         }
         //GetFormById test
         [Fact]
-        public async void GetFormById_ShouldReturn_OkResult_WhenSuccess()
+        public async void GetFormById_ShouldReturnOkResult_WhenSuccess()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();
@@ -85,11 +85,11 @@ namespace PageMaintenanceAPI_Test
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
-            result.Result.Should().BeAssignableTo<OkObjectResult>();
+            result.Result.Should().BeAssignableTo<OkObjectResult>().Subject.Value.Should().Be(form); 
             _formInterface.Verify(t => t.GetFormById(formId), Times.Once());
         }
         [Fact]
-        public async void GetFormById_ShouldReturn_NotFoundResult_WhenFormNotFound()
+        public async void GetFormById_ShouldReturnNotFoundResult_WhenFormNotFound()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();
@@ -105,7 +105,7 @@ namespace PageMaintenanceAPI_Test
 
         }
         [Fact]
-        public async void GetFormById_ShouldReturn_BadRequestResult_When_ErrorOccurs()
+        public async void GetFormById_ShouldReturnBadRequestResult_When_ErrorOccurs()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();
@@ -121,7 +121,7 @@ namespace PageMaintenanceAPI_Test
         }
         //GetFormByFormName
         [Fact]
-        public async void GetFormByFormName_ShouldReturn_OkResult_WhenSuccess()
+        public async void GetFormByFormName_ShouldReturnOkResult_WhenSuccess()
         {
             //Arrange
             var formName = _fixture.Create<String>();
@@ -134,11 +134,11 @@ namespace PageMaintenanceAPI_Test
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
-            result.Result.Should().BeAssignableTo<OkObjectResult>();
+            result.Result.Should().BeAssignableTo<OkObjectResult>().Subject.Value.Should().Be(form);
             _formInterface.Verify(t => t.GetFormByFormName(formName), Times.Once());
         }
         [Fact]
-        public async void GetFormByFormName_ShouldReturn_NotFoundResult_WhenFormNotFound()
+        public async void GetFormByFormName_ShouldReturnNotFoundResult_WhenFormNotFound()
         {
             //Arrange
             var formName = _fixture.Create<String>();
@@ -149,12 +149,12 @@ namespace PageMaintenanceAPI_Test
 
             //Assert
             result.Should().NotBeNull();
-            result.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject.Value.Should().Be("Returned empty object");
+            result.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject.Value.Should().Be("Form Not Found");
             _formInterface.Verify(t => t.GetFormByFormName(formName), Times.Once());
 
         }
         [Fact]
-        public async void GetFormByFormName_ShouldReturn_BadRequestResult_When_ErrorOccurs()
+        public async void GetFormByFormName_ShouldReturnBadRequestResult_When_ErrorOccurs()
         {
             //Arrange
             var formName = _fixture.Create<String>();
@@ -169,7 +169,7 @@ namespace PageMaintenanceAPI_Test
             _formInterface.Verify(t => t.GetFormByFormName(formName), Times.Once());
         }
         [Fact]
-        public async void GetFormByFormName_ShouldReturn_BadRequestResult_When_FormNumber_IsNull()
+        public async void GetFormByFormName_ShouldReturnBadRequestResult_When_FormNumber_IsNull()
         {
             //Arrange
             String formName = null;
@@ -184,7 +184,7 @@ namespace PageMaintenanceAPI_Test
             _formInterface.Verify(t => t.GetFormByFormName(formName), Times.Never());
         }
         [Fact]
-        public async void GetFormByFormName_ShouldReturn_BadRequestResult_When_FormNumber_IsEmpty()
+        public async void GetFormByFormName_ShouldReturnBadRequestResult_When_FormNumber_IsEmpty()
         {
             //Arrange
             String formName = "";
@@ -200,7 +200,7 @@ namespace PageMaintenanceAPI_Test
         }
         //GetFormByFormNumber
         [Fact]
-        public async void GetFormByFormNumber_ShouldReturn_OkResult_WhenSuccess()
+        public async void GetFormByFormNumber_ShouldReturnOkResult_WhenSuccess()
         {
             //Arrange
             var formNumber = _fixture.Create<String>();
@@ -213,11 +213,11 @@ namespace PageMaintenanceAPI_Test
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
-            result.Result.Should().BeAssignableTo<OkObjectResult>();
+            result.Result.Should().BeAssignableTo<OkObjectResult>().Subject.Value.Should().Be(form);
             _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Once());
         }
         [Fact]
-        public async void GetFormByFormNumber_ShouldReturn_NotFoundResult_WhenFormNotFound()
+        public async void GetFormByFormNumber_ShouldReturnNotFoundResult_WhenFormNotFound()
         {
             //Arrange
             var formNumber = _fixture.Create<String>();
@@ -228,12 +228,12 @@ namespace PageMaintenanceAPI_Test
 
             //Assert
             result.Should().NotBeNull();
-            result.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject.Value.Should().Be("Returned empty object");
+            result.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject.Value.Should().Be("Form Not Found");
             _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Once());
 
         }
         [Fact]
-        public async void GetFormByFormNumber_ShouldReturn_BadRequestResult_When_ErrorOccurs()
+        public async void GetFormByFormNumber_ShouldReturnBadRequestResult_When_ErrorOccurs()
         {
             //Arrange
             var formNumber = _fixture.Create<String>();
@@ -248,7 +248,7 @@ namespace PageMaintenanceAPI_Test
             _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Once());
         }
         [Fact]
-        public async void GetFormByFormNumber_ShouldReturn_BadRequestResult_When_FormNumber_IsNull()
+        public async void GetFormByFormNumber_ShouldReturnBadRequestResult_When_FormNumber_IsNull()
         {
             //Arrange
             String formNumber = null;
@@ -263,7 +263,7 @@ namespace PageMaintenanceAPI_Test
             _formInterface.Verify(t => t.GetFormByFormNumber(formNumber), Times.Never());
         }
         [Fact]
-        public async void GetFormByFormNumber_ShouldReturn_BadRequestResult_When_FormNumber_IsEmpty()
+        public async void GetFormByFormNumber_ShouldReturnBadRequestResult_When_FormNumber_IsEmpty()
         {
             //Arrange
             String formNumber = "";
@@ -279,7 +279,7 @@ namespace PageMaintenanceAPI_Test
         }
         //AddForm Test
         [Fact]
-        public async void AddForm_ShouldReturn_OkResult_WhenSuccess()
+        public async void AddForm_ShouldReturnOkResult_WhenSuccess()
         {
             //Arrange
             var form = _fixture.Create<Form>();
@@ -296,7 +296,7 @@ namespace PageMaintenanceAPI_Test
             _formInterface.Verify(f => f.AddForm(form), Times.Once());
         }
         [Fact]
-        public async void AddForm_ShouldReturn_BadRequest_WhenExceptionIsThrown()
+        public async void AddForm_ShouldReturnBadRequest_WhenExceptionIsThrown()
         {
             //Arrange
             var form = _fixture.Create<Form>();
@@ -312,7 +312,7 @@ namespace PageMaintenanceAPI_Test
 
         }
         [Fact]
-        public async void AddForm_ShouldReturn_BadRequestResult_When_ErrorOccurs()
+        public async void AddForm_ShouldReturnBadRequestResult_When_ErrorOccurs()
         {
             //Arrange
             var form = _fixture.Create<Form>();
@@ -329,63 +329,63 @@ namespace PageMaintenanceAPI_Test
         }
         //Update Form
         [Fact]
-        public async void EditFormById_ShouldReturn_OkResult_WhenSuccess()
+        public async void EditFormById_ShouldReturnOkResult_WhenSuccess()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();
             var existingform = _fixture.Create<Form>();
             var newform = _fixture.Create<Form>();
-            _formInterface.Setup(f => f.EditFormById(formId, existingform)).ReturnsAsync(newform);
+            _formInterface.Setup(f => f.EditFormById(existingform)).ReturnsAsync(newform);
 
             //Action
-            var result = _formController.EditFormById(formId, existingform);
+            var result = _formController.EditFormById( existingform);
 
             //Assert
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<Task<IActionResult>>();
             result.Result.Should().BeAssignableTo<OkObjectResult>().Subject.Value.Should().Be(newform);
-            _formInterface.Verify(f => f.EditFormById(formId, existingform), Times.Once());
+            _formInterface.Verify(f => f.EditFormById(existingform), Times.Once());
         }
         [Fact]
-        public async void EditFormById_ShouldReturn_NotFound_WhenFormNotFound()
+        public async void EditFormById_ShouldReturnNotFound_WhenFormNotFound()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();
             Form existingform = null;
             var newform = _fixture.Create<Form>();
-            _formInterface.Setup(f => f.EditFormById(formId, existingform)).ReturnsAsync(existingform);
+            _formInterface.Setup(f => f.EditFormById(existingform)).ReturnsAsync(existingform);
 
             //Act
-            var result = _formController.EditFormById(formId, existingform);
+            var result = _formController.EditFormById(existingform);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<NotFoundObjectResult>().Subject.Value.Should().Be("Form Not Found");
-            _formInterface.Verify(t => t.EditFormById(formId, existingform), Times.Once());
+            _formInterface.Verify(t => t.EditFormById(existingform), Times.Once());
 
         }
         [Fact]
-        public async void EditFormById_ShouldReturn_BadRequestResult_When_ErrorOccurs()
+        public async void EditFormById_ShouldReturnBadRequestResult_When_ErrorOccurs()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();
             var existingform = _fixture.Create<Form>();
             Form newform = null ;
-            _formInterface.Setup(f => f.EditFormById(formId, existingform)).Throws(new Exception("Error occured"));
+            _formInterface.Setup(f => f.EditFormById(existingform)).Throws(new Exception("Error occured"));
             
 
             //Act
-            var result = _formController.EditFormById(formId, existingform);
+            var result = _formController.EditFormById(existingform);
 
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().BeAssignableTo<BadRequestObjectResult>("Error Occured");
-            _formInterface.Verify(f => f.EditFormById(formId, existingform), Times.Once());
+            _formInterface.Verify(f => f.EditFormById(existingform), Times.Once());
         }
 
         //DeleteFormByid
         [Fact]
-        public async void DeleteFormById_ShouldReturn_OkResult_WhenSuccess()
+        public async void DeleteFormById_ShouldReturnOkResult_WhenSuccess()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();
@@ -402,7 +402,7 @@ namespace PageMaintenanceAPI_Test
             _formInterface.Verify(t => t.DeleteFormById(formId), Times.Once());
         }
         [Fact]
-        public async void DeleteFormById_ShouldReturn_NotFoundResult_WhenFormNotFound()
+        public async void DeleteFormById_ShouldReturnNotFoundResult_WhenFormNotFound()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();
@@ -418,7 +418,7 @@ namespace PageMaintenanceAPI_Test
 
         }
         [Fact]
-        public async void DeleteFormById_ShouldReturn_BadRequestResult_When_ErrorOccurs()
+        public async void DeleteFormById_ShouldReturnBadRequestResult_When_ErrorOccurs()
         {
             //Arrange
             var formId = _fixture.Create<Guid>();

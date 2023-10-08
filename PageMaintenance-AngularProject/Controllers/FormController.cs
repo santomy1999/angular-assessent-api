@@ -14,7 +14,7 @@ namespace PageMaintenance_AngularProject.Controllers
         {
             _formInterface = formInterface;
         }
-        [HttpGet("FormsAll")]
+        [HttpGet("formsAll")]
         public async Task<IActionResult> GetAllForms()
         {
             try
@@ -48,7 +48,7 @@ namespace PageMaintenance_AngularProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("FormName:{formName}")]
+        [HttpGet("formName:{formName}")]
         public async Task<IActionResult> GetFormByFormName([FromRoute] string formName)
         {
             try
@@ -62,7 +62,7 @@ namespace PageMaintenance_AngularProject.Controllers
                 {
                     return Ok(forms);
                 }
-                return NotFound("Returned empty object");
+                return NotFound("Form Not Found");
 
             }
             catch (Exception ex)
@@ -70,7 +70,7 @@ namespace PageMaintenance_AngularProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("FormNumber:{formNumber}")]
+        [HttpGet("formNumber:{formNumber}")]
         public async Task<IActionResult> GetFormByFormNumber([FromRoute] string formNumber)
         {
             try
@@ -84,7 +84,7 @@ namespace PageMaintenance_AngularProject.Controllers
                 {
                     return Ok(forms);
                 }
-                return NotFound("Returned empty object");
+                return NotFound("Form Not Found");
 
             }
             catch (Exception ex)
@@ -93,7 +93,7 @@ namespace PageMaintenance_AngularProject.Controllers
             }
         }
         //Post Functions
-        [HttpPost("Form")]
+        [HttpPost("form")]
         public async Task<IActionResult> AddForm([FromBody] Form form)
         {
             try
@@ -114,12 +114,12 @@ namespace PageMaintenance_AngularProject.Controllers
 
         //Update functions
 
-        [HttpPatch("FormId:{formId}")]
-        public async Task<IActionResult> EditFormById([FromRoute] Guid formId, [FromBody] Form newForm)
+        [HttpPatch("form")]
+        public async Task<IActionResult> EditFormById([FromBody] Form newForm)
         {
             try
             {
-                var form = await _formInterface.EditFormById(formId, newForm);
+                var form = await _formInterface.EditFormById(newForm);
                 if(form != null)
                 {
                     return Ok(form);
@@ -134,7 +134,7 @@ namespace PageMaintenance_AngularProject.Controllers
 
 
         //Delete Functions
-        [HttpDelete("FormNumber:{formId}")]
+        [HttpDelete("formNumber:{formId}")]
         public async Task<IActionResult> DeleteFormById([FromRoute] Guid formId)
         {
             try

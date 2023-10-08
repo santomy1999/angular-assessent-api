@@ -14,7 +14,7 @@ namespace PageMaintenance_AngularProject.Services
         }
 
         //Get functions
-        public async Task<Form> GetFormById(Guid id)
+        public async Task<Form?> GetFormById(Guid id)
         {
             var form = await _polAdminSysContext.Forms.FindAsync(id);
             return form != null ? form : null;
@@ -24,7 +24,7 @@ namespace PageMaintenance_AngularProject.Services
             var forms = await _polAdminSysContext.Forms.ToListAsync();
             return forms.Any() ? forms : null;
         }
-        public async Task<List<Form>> GetFormByFormName(string formName)
+        public async Task<List<Form>?> GetFormByFormName(string formName)
         {
 
             var forms = await _polAdminSysContext.Forms
@@ -33,7 +33,7 @@ namespace PageMaintenance_AngularProject.Services
             return forms.Any() ? forms : (List<Form>?)null;
         }
 
-        public async Task<List<Form>> GetFormByFormNumber(string formNumber)
+        public async Task<List<Form>?> GetFormByFormNumber(string formNumber)
         {
             var forms = await _polAdminSysContext.Forms
                 .Where(x => x.Number.Contains(formNumber))
@@ -45,19 +45,20 @@ namespace PageMaintenance_AngularProject.Services
         public async Task<Form> AddForm(Form form)
         {
             var result = _polAdminSysContext.Forms.AddAsync(form);
-            if (result == null)
+            if (result != null)
             {
-                return null;
+                await _polAdminSysContext.SaveChangesAsync();
+                return form;
             }
-            await _polAdminSysContext.SaveChangesAsync();
-            return form;
+            
+            return null;
         }
 
         //Update functions
 
-        public async Task<Form> EditFormById(Guid formId, Form newForm)
+        public async Task<Form> EditFormById(Form newForm)
         {
-            var currentForm = await _polAdminSysContext.Forms.FindAsync(formId);
+            var currentForm = await _polAdminSysContext.Forms.FindAsync(newForm.Id);
             if(currentForm == null)
             {
                 return null;
