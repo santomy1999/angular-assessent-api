@@ -1,6 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Server;
 using Moq;
 
 using PageMaintenance_AngularProject.Controllers;
@@ -23,56 +24,56 @@ namespace PageMaintenanceAPI_Test.Controllers
         }
         //GetTableNames Test
         [Fact]
-        public void GetTableNames_ReturnsOk_When_Success()
+        public async void GetTableNames_ReturnsOk_WhenSuccess()
         {
             //Arrange
             var tableNames = _fixture.Create<List<TableNames>>();
             _tableInterface.Setup(t=>t.GetTableNames()).ReturnsAsync(tableNames);
 
             //Act
-            var result = _tableController.GetAllTableNames();
+            var result = await _tableController.GetAllTableNames();
 
             //Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<Task<IActionResult>>();
-            result.Result.Should().BeAssignableTo<OkObjectResult>().Subject.Value.Should().Be(tableNames);
+            result.Should().BeAssignableTo<OkObjectResult>();
+            var okObjectResult = result.As<OkObjectResult>();
+            okObjectResult.Value.Should().BeEquivalentTo(tableNames);
             _tableInterface.Verify(t=>t.GetTableNames(), Times.Once());
         }
         [Fact]
-        public async void GetTableNames_ShouldReturn_NotFound_When_DataNotFound()
+        public async void GetTableNames_ShouldReturnNotFound_WhenDataNotFound()
         {
             //Arrange
            _tableInterface.Setup(t=>t.GetTableNames()).Returns(Task.FromResult<List<TableNames>>(null));
 
             //Act
-            var result = _tableController.GetAllTableNames();
+            var result =  await _tableController.GetAllTableNames();
 
             //Assert
-            result.Should().NotBeNull();
-            result.Should().BeAssignableTo<Task<IActionResult>>();
-            result.Result.Should().BeAssignableTo<NotFoundResult>();
+             result.Should().NotBeNull();
+            var notFoundObjectResult = Assert.IsType<NotFoundResult>(result);
             _tableInterface.Verify(t => t.GetTableNames(), Times.Once());
         }
         [Fact]
-        public async void GetTableNames_ShouldReturn_BadRequest_When_ErrorOccured()
+        public async void GetTableNames_ShouldReturnBadRequest_WhenErrorOccured()
         {
             //Arrange
             var tableNames = _fixture.Create<List<TableNames>>();
             _tableInterface.Setup(t => t.GetTableNames()).Throws(new Exception("Error Occured"));
 
             //Act
-            var result = _tableController.GetAllTableNames();
+            var result =await _tableController.GetAllTableNames();
 
             //Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<Task<IActionResult>>();
-            result.Result.Should().BeAssignableTo<BadRequestObjectResult>().Subject.Value.Should().Be("Error Occured");
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Error Occured", badRequestResult.Value);
             _tableInterface.Verify(t => t.GetTableNames(), Times.Once());
         }
         //GetTableById Tests
 
         [Fact]
-        public async void GetTableById_ShouldReturn_OkResult_WhenSuccess()
+        public async void GetTableById_ShouldReturnOkResult_WhenSuccess()
         {
             //Arrange
             var tableId = _fixture.Create<Guid>();
@@ -80,43 +81,44 @@ namespace PageMaintenanceAPI_Test.Controllers
             _tableInterface.Setup(t => t.GetTableById(tableId)).ReturnsAsync(table);
 
             //Action
-            var result = _tableController.GetTableById(tableId);
+            var result = await _tableController.GetTableById(tableId);
 
             //Assert
             result.Should().NotBeNull();
-            result.Should().BeAssignableTo<Task<IActionResult>>();
-            result.Result.Should().BeAssignableTo<OkObjectResult>();
+            result.Should().BeAssignableTo<OkObjectResult>();
+            var okObjectResult = result.As<OkObjectResult>();
+            okObjectResult.Value.Should().BeEquivalentTo(table);
             _tableInterface.Verify(t=>t.GetTableById(tableId), Times.Once());
         }
         [Fact]
-        public async void GetTableById_ShouldReturn_NotFoundResult_WhenTableNotFound()
+        public async void GetTableById_ShouldReturnNotFoundResult_WhenTableNotFound()
         {
             //Arrange
             var tableId = _fixture.Create<Guid>();
             _tableInterface.Setup(t => t.GetTableById(tableId)).ReturnsAsync((Aotable)null);
 
             //Act
-            var result = _tableController.GetTableById(tableId);
+            var result = await _tableController.GetTableById(tableId);
 
             //Assert
             result.Should().NotBeNull();
-            result.Result.Should().BeAssignableTo<NotFoundResult>();
+            var notFoundObjectResult = Assert.IsType<NotFoundResult>(result);
             _tableInterface.Verify(t=>t.GetTableById(tableId), Times.Once() );
 
         }
         [Fact]
-        public async void GetTableById_ShouldReturn_BadRequestResult_When_ErrorOccurs()
+        public async void GetTableById_ShouldReturnBadRequestResult_WhenErrorOccurs()
         {
             //Arrange
             var tableId = _fixture.Create<Guid>();
             _tableInterface.Setup(t => t.GetTableById(tableId)).Throws(new Exception("Error Occured"));
 
             //Act
-            var result = _tableController.GetTableById(tableId);
+            var result = await _tableController.GetTableById(tableId);
 
             //Assert
-            result.Should().NotBeNull();
-            result.Result.Should().BeAssignableTo<BadRequestObjectResult>("Error Occured");
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Error Occured", badRequestResult.Value);
             _tableInterface.Verify(t => t.GetTableById(tableId), Times.Once());
         }
     }

@@ -51,21 +51,17 @@ namespace PageMaintenance_AngularProject.Services
         }
 
         //Add Form
-        public async Task<Form> AddForm(Form form)
+        public async Task<Form?> AddForm(Form form)
         {
             var result = _polAdminSysContext.Forms.AddAsync(form);
-            if (result != null)
-            {
-                await _polAdminSysContext.SaveChangesAsync();
-                return form;
-            }
-            
-            return null;
+            await _polAdminSysContext.SaveChangesAsync();
+            return form;
+          
         }
 
         //Update functions
 
-        public async Task<Form> EditFormById(Form newForm)
+        public async Task<Form?> EditFormById(Form newForm)
         {
             var currentForm = await _polAdminSysContext.Forms.FindAsync(newForm.Id);
             if(currentForm == null)
@@ -126,7 +122,7 @@ namespace PageMaintenance_AngularProject.Services
 
         //Delete functions
 
-        public async Task<Form> DeleteFormById(Guid formId)
+        public async Task<Form?> DeleteFormById(Guid formId)
         {
             var form = await _polAdminSysContext.Forms.FindAsync(formId);
             if(form == null)
